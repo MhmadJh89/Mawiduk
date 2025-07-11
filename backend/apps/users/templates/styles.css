@@ -1,0 +1,32 @@
+p:hover {
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    /* تجعل الفأرة جاهزة للضغط */
+}
+
+.forms {
+    width: 200px;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    border-radius: 5px;
+    border: 1px black solid;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+
+
+}
+
+span {
+    color: red;
+}
+
+.back {
+    float: right;
+    border-radius: 50%;
+}

@@ -11,11 +11,19 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+import os
+from cryptography.fernet import Fernet
+
+# استخدم متغير بيئي أو أنشئ مفتاحًا جديدًا عند أول تشغيل
+PASSWORD_ENCRYPTION_KEY = os.getenv(
+    "PASSWORD_ENCRYPTION_KEY",
+    Fernet.generate_key().decode()  # احفظ هذه القيمة الثابتة في .env لاحقًا
+).encode()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
 
 
 # Quick-start development settings - unsuitable for production
@@ -39,7 +47,48 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',  
+    'rest_framework_simplejwt.token_blacklist',
+    'apps.users',
+    'apps.appointments',
+    'apps.booking',
+    'apps.clients'
+   
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+
+SIMPLE_JWT = {
+    # مدة صلاحية توكين الوصول
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+
+    # مدة صلاحية توكين التحديث
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+
+    # إذا فعّلت الدوران، سيُنشئ لك توكين تحديث جديد عند كل Refresh
+    'ROTATE_REFRESH_TOKENS': True,
+
+    # عند الدوران، يتم حظر التوكين القديم
+    'BLACKLIST_AFTER_ROTATION': True,
+
+    # خوارزمية التوقيع، ومفتاح التوقيع
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+
+    # نوع الهيدر المستخدم في الطلب
+    'AUTH_HEADER_TYPES': ('Bearer',),
+
+    # إعدادات إضافية
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,6 +101,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'core.urls'
+
+
 
 TEMPLATES = [
     {
@@ -119,6 +170,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
