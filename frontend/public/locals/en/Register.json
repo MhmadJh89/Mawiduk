@@ -1,0 +1,15 @@
+{
+  "register": "Register",
+  "welcome": "Please enter your details",
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "email": "Your Email",
+  "phone": "Your Phone Number",
+  "month": "Month",
+  "day": "Day",
+  "year": "Year",
+  "register_btn": "Register",
+  "register_google": "Register with Google",
+  "have_account": "Already have an account?",
+  "login_here": "Log in"
+}
