@@ -1,5 +1,87 @@
 @import "tailwindcss";
-
+@theme {
+  --color-main: #151a20;
+  --color-sec: #d4af37;
+  --color-card: #2c3e50;
+}
 :root {
-    background-color: #151a20;
+  background-color: #151a20;
+  color: #fff;
+}
+body {
+  font-family: "SF Pro";
+}
+.spec-container {
+  padding-right: 100px;
+  padding-left: 100px;
+}
+@media (max-width: 768px) {
+  .spec-container {
+    padding-right: 30px;
+    padding-left: 30px;
+  }
+}
+@font-face {
+  font-family: "SF Pro";
+  src: url("/fonts/SFPRODISPLAYREGULAR.OTF") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro";
+  src: url("/fonts/SFPRODISPLAYBOLD.OTF") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+.react-datepicker {
+  border: none !important;
+  background-color: var(--color-card); 
+  font-family: inherit;
+  border-radius: 20px !important;
+}
+@media (max-width: 640px) {
+  .react-datepicker {
+    width: 100%;
+    font-size: 15px !important;
+  }
+  .react-datepicker__month-container {
+    width: 100%;
+  }
+}
+.react-datepicker * {
+  color: #fff !important;
+}
+.react-datepicker__month-container {
+  background-color: var(--color-card); 
+  border-radius: 20px !important;
+  padding: 10px;
+}
+.react-datepicker__header {
+  background-color: var(--color-card) !important; 
+  color: white;
+  border-bottom: none;
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+}
+.react-datepicker__month {
+  background-color: var(--color-card);
+}
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: white;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: var(--color-main) !important; 
+  color: white !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: #e0f2fe !important;
+}
+
+.react-datepicker__day--outside-month {
+  color: #9ca3af !important; 
 }
