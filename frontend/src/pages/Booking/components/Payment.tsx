@@ -9,36 +9,36 @@ export default function Payment() {
 
   return (
     <div className="col-span-12 flex gap-10">
-      <div className="w-[60%]  max-sm:w-[100%]">
+      <div className="w-[60%]  max-md:w-[100%]">
         <form action="" className="flex flex-col gap-6 mb-20">
           <input
             type="text"
-            className="focus-visible:outline-none p-2 border-solid border-b-1 w-[80%] max-sm:w-[100%] text-[20px]"
+            className="focus-visible:outline-none p-2 border-solid border-b-1 w-[80%] max-md:w-[100%] text-[20px]"
             placeholder="Enter Name on Card"
           />
           <input
             type="text"
-            className="focus-visible:outline-none p-2 border-solid border-b-1 w-[80%] max-sm:w-[100%] text-[20px]"
+            className="focus-visible:outline-none p-2 border-solid border-b-1 w-[80%] max-md:w-[100%] text-[20px]"
             placeholder="Card Number"
           />
           <input
             type="text"
-            className="focus-visible:outline-none p-2 border-solid border-b-1 w-[80%] max-sm:w-[100%] text-[20px]"
+            className="focus-visible:outline-none p-2 border-solid border-b-1 w-[80%] max-md:w-[100%] text-[20px]"
             placeholder="Expire Date"
           />
           <input
             type="text"
-            className="focus-visible:outline-none p-2 border-solid border-b-1 w-[80%] max-sm:w-[100%] text-[20px]"
+            className="focus-visible:outline-none p-2 border-solid border-b-1 w-[80%] max-md:w-[100%] text-[20px]"
             placeholder="CVV"
           />
           <div className="text-[40px] max-md:text-[25px]">OR</div>
           <input
             type="text"
-            className="focus-visible:outline-none p-2 border-solid border-b-1 w-[80%] max-sm:w-[100%] text-[20px]"
+            className="focus-visible:outline-none p-2 border-solid border-b-1 w-[80%] max-md:w-[100%] text-[20px]"
             placeholder="Enter Vodafone Cash Number"
           />
         </form>
-        <div className="controls flex gap-10 w-[55%] font-bold mt-auto mr-auto min-sm:ml-10  max-sm:w-full">
+        <div className="controls flex gap-5 w-[55%] max-xl:w-[315px] font-bold mt-auto mr-auto min-md:ml-10  max-md:w-full">
           <Button
             newStyles="bg-white text-black"
             onClick={() => {
@@ -54,7 +54,7 @@ export default function Payment() {
               console.log(step);
             }}
           >
-            Next
+            Comfirm Payment
           </Button>
         </div>
       </div>
