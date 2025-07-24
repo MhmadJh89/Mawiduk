@@ -13,8 +13,8 @@ const CustomStepIcon: React.FC<Props> = ({ active, completed, className }) => {
     <Box
       className={className}
       sx={{
-        width: { xs: 50, sm: 60, md: 70 }, // تكبير الدواير
-        height: { xs: 50, sm: 60, md: 70 },
+        width: { xs: 50, sm: 50, md: 50 }, 
+        height: { xs: 50, sm: 50, md: 50 },
         borderRadius: "50%",
         border: "5px solid" + (active ? "#D4AF37" : "#ffffff"),
         backgroundColor: completed ? "#008000" : active ? "#151a20" : "#B4B9C9",

@@ -8,8 +8,8 @@ interface MemberCardProps {
 }
 export default function MemberCard({ img, name, desc }: MemberCardProps) {
   return (
-    <div className="bg-card py-7 px-15 h-[280px] text-center rounded-lg flex-col gap-2 flex relative max-sm:w-full items-center">
-      <div className="more absolute top-3 right-3 cursor-pointer">
+    <div className="col-span-1 bg-card py-7 px-15  xl:px-[70px] max-sm:px-8 h-[280px] text-center rounded-lg flex-col gap-2 flex relative  items-center">
+      <div className="more absolute top-1 right-1 cursor-pointer">
         <MoreVertRoundedIcon
           className="bg-black text-white rounded-full w-20px h-20px p-2"
           fontSize="large"

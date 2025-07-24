@@ -22,7 +22,7 @@ export default function Confirm() {
           Total: <span>150</span>$
         </p>
       </div>
-      <div className="controls flex gap-3 font-bold mt-auto m-auto w-[30%] max-sm:w-full">
+      <div className="controls flex gap-3 font-bold mt-auto m-auto w-[30%] max-xl:w-[55%] max-sm:w-full">
         <Button
           newStyles="bg-white text-black"
           onClick={() => {
@@ -38,7 +38,7 @@ export default function Confirm() {
             console.log(step);
           }}
         >
-          Next
+          Comfirm Booking
         </Button>
       </div>
     </div>

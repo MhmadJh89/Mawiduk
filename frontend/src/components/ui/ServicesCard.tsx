@@ -18,11 +18,11 @@ export default function ServiceCard({
 }: ServiceCardProps) {
   const rateArr = Array.from({ length: rate }, (_, i) => i);
   return (
-    <div className="bg-card rounded-lg pl-10 pr-2 py-2 max-md:p-5 flex flex-col gap-3 ">
+    <div className="bg-card rounded-lg pl-10 pr-2 py-2 max-md:p-5 flex flex-col gap-3 xl:max-w-[963px]">
       <div className="flex gap-10 max-md:flex-col-reverse">
         <div>
-          <h4 className="text-[24px]">{name}</h4>
-          <p className="text-[16px]">{desc}</p>
+          <h4 className="text-[20px]">{name}</h4>
+          <p className="text-[13px]">{desc}</p>
         </div>
         <img
           src={img}

@@ -18,15 +18,16 @@ import DateTime from "./components/DateTime";
 import Confirm from "./components/Confirm";
 import Payment from "./components/Payment";
 import Success from "./components/Success";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../components/ui/Button";
 import { setStep } from "../../redux/slices/stepSlice";
-
+import PostAddIcon from "@mui/icons-material/PostAdd";
+import { CircularProgress } from "@mui/material";
+import NavigateButtons from "./components/navigateButtons";
+import Overlay from "../../components/ui/Overlay";
 const QontoConnector = styled(StepConnector)(() => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
-    top: "35px",
-    left: "calc(-50% + 35px)",
-    right: "calc(50% + 35px)",
+    top: "23px",
   },
   [`& .${stepConnectorClasses.line}`]: {
     borderColor: "#eaeaf0",
@@ -39,53 +40,45 @@ export default function Booking() {
   const [login, setLogin] = useState(false);
   const step = useSelector((state: RootState) => state.step.step);
   const dispatch = useDispatch();
+  const [windowSize, setWindowSize] = useState<number>(window.innerWidth);
+  const [showMyService, setShowMyService] = useState<boolean>(false);
+  useEffect(() => {
+    window.addEventListener("resize", () => {
+      setWindowSize(window.innerWidth);
+    });
+  }, []);
+
   const switchContent = (step: number) => {
     switch (step) {
       case 0:
         return (
           <div className="my-5">
-            <h2 className="text-[40px] max-md:text-[25px]">Choose a service</h2>
+            <h2 className="text-[25px] ">Choose a service</h2>
           </div>
         );
       case 1:
         return (
           <div className="my-5">
-            <h2 className="text-[40px] max-md:text-[25px]">
-              Select a staff member
-            </h2>
-            <ul className="flex flex-wrap gap-5 text-[#B2BBC6] text-[20px]">
-              <li>All</li>
-              <li>Sunday</li>
-              <li>Monday</li>
-              <li>Tuseday</li>
-              <li>Wednesday</li>
-              <li>Thursday</li>
-              <li>Friday</li>
-              <li>Saturday</li>
-            </ul>
+            <h2 className="text-[25px] ">Select a staff member</h2>
           </div>
         );
       case 2:
         return (
           <div className="my-5">
-            <h2 className="text-[40px] max-md:text-[25px]">Pick date & time</h2>
+            <h2 className="text-[25px]">Pick date & time</h2>
           </div>
         );
 
       case 3:
         return (
           <div className="my-5">
-            <h2 className="text-[40px] max-md:text-[25px]">
-              Enter Your details
-            </h2>
+            <h2 className="text-[25px]">Enter Your details</h2>
           </div>
         );
       case 4:
         return (
           <div className="my-5">
-            <h2 className="text-[40px] max-md:text-[25px]">
-              Confirm your booking
-            </h2>
+            <h2 className="text-[25px]">Confirm your booking</h2>
           </div>
         );
       case 5:
@@ -96,13 +89,23 @@ export default function Booking() {
         );
     }
   };
+  const HideMyService = () => {
+    setShowMyService(false);
+  };
   return (
-    <div className="booking pt-5 pb-20 ">
+    <div
+      className={
+        "booking pt-5 pb-20 max-w-[1900px]" +
+        " " +
+        (showMyService && "h-[100vh] overflow-y-hidden")
+      }
+    >
+      {showMyService && <Overlay onClick={HideMyService} />}
       <div className="spec-container">
         {step <= 4 && (
           <>
             {" "}
-            <h2 className="text-[40px]  max-md:text-[25px] my-5">
+            <h2 className="text-[25px] max-lg:text-[20px]   my-5">
               Book Your Appointment _ Step by Step
             </h2>
             <div className="circles  my-5 min-lg:translate-x-[-55px]">
@@ -137,25 +140,72 @@ export default function Booking() {
           </>
         )}
         <div className="">
-          {switchContent(step)}
-
+          <div className="flex justify-between">
+            {switchContent(step)}
+            {step < 4 && windowSize <= 1024 && (
+              <div
+                className="flex items-center z-50"
+                onClick={() => {
+                  setShowMyService(!showMyService);
+                }}
+              >
+                <div className="!w-13 !h-13 relative">
+                  <CircularProgress
+                    sx={{ color: "#D4AF37" }} // أي كود لون تحبه
+                    variant="determinate"
+                    value={25 * step}
+                    className="absolute !w-full !h-full right-0"
+                  />
+                  <PostAddIcon
+                    className="
+                bg-card !w-full !h-full p-3 rounded-full 
+                
+                "
+                    fontSize="small"
+                  ></PostAddIcon>
+                </div>
+              </div>
+            )}
+          </div>
+          {step === 1 && (
+            <ul className="flex flex-wrap gap-5 mb-3 max-sm:justify-center max-sm:gap-2  max-sm:text-[13px] text-[#B2BBC6] text-[16px]">
+              <li>All</li>
+              <li>Sunday</li>
+              <li>Monday</li>
+              <li>Tuseday</li>
+              <li>Wednesday</li>
+              <li>Thursday</li>
+              <li>Friday</li>
+              <li>Saturday</li>
+            </ul>
+          )}
           <div className="flex gap-10 max-lg:flex-col-reverse min-lg:grid grid-cols-12">
             {step === 0 && <Services />}
             {step === 1 && <Staff />}
             {step === 2 && <DateTime />}
             {step === 3 && <Details />}
             {step === 4 && <Confirm />}
-            {step < 4 && !login && (
-              <MyService
-                img={serviceImg}
-                name="Service name"
-                desc="Lorem ipsum dolor sit amet consectetur. Ac mauris enim senectus quam
-            ipsum ac ipsum sagittis sit. Nunc turpis leo sed tincidunt laoreet
-            eleifend posuere diam. Leo fames aliquam et quisque sed convallis
-            eros varius aliquam."
-                price={150.0}
-              />
-            )}
+            {step < 4 &&
+              !login &&
+              (windowSize > 1024 ? (
+                <MyService
+                  img={serviceImg}
+                  name="Service name"
+                  desc="Lorem ipsum dolor sit amet consectetur. Ac mauris enim senectus quam
+              ipsum ac ipsum sagittis sit. "
+                  price={150.0}
+                />
+              ) : (
+                showMyService && (
+                  <MyService
+                    img={serviceImg}
+                    name="Service name"
+                    desc="Lorem ipsum dolor sit amet consectetur. Ac mauris enim senectus quam
+              ipsum ac ipsum sagittis sit. "
+                    price={150.0}
+                  />
+                )
+              ))}
             {step < 4 && login && (
               <div className="controls flex gap-3 font-bold col-span-3 w-full max-sm:w-full mb-auto">
                 <Button
@@ -180,6 +230,13 @@ export default function Booking() {
             {step === 5 && <Payment />}
             {step === 6 && <Success />}
           </div>
+          {step < 4 && windowSize <= 1024 && (
+            <div className="flex justify-center fixed bottom-0 left-[50%] translate-x-[-50%]">
+              <div className="w-[200px] mb-5">
+                <NavigateButtons />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
