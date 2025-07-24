@@ -13,7 +13,7 @@ const CustomStepIcon: React.FC<Props> = ({ active, completed, className }) => {
     <Box
       className={className}
       sx={{
-        width: { xs: 50, sm: 50, md: 50 }, 
+        width: { xs: 50, sm: 50, md: 50 },
         height: { xs: 50, sm: 50, md: 50 },
         borderRadius: "50%",
         border: "5px solid" + (active ? "#D4AF37" : "#ffffff"),
@@ -25,9 +25,7 @@ const CustomStepIcon: React.FC<Props> = ({ active, completed, className }) => {
         fontSize: { xs: 20, sm: 24, md: 26 },
         zIndex: 1,
       }}
-    >
-      {completed ? <CheckIcon sx={{ fontSize: "inherit" }} /> : null}
-    </Box>
+    ></Box>
   );
 };
 

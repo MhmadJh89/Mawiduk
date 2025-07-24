@@ -2,10 +2,12 @@ import { useDispatch, useSelector } from "react-redux";
 import Button from "../../../components/ui/Button";
 import { setStep } from "../../../redux/slices/stepSlice";
 import type { RootState } from "../../../redux/store";
+import { useTranslation } from "react-i18next";
 
 export default function NavigateButtons() {
   const dispatch = useDispatch();
   const step = useSelector((state: RootState) => state.step.step);
+  const { t } = useTranslation("Booking");
 
   return (
     <div className="controls flex gap-3 font-bold ">
@@ -15,7 +17,7 @@ export default function NavigateButtons() {
           step > 0 ? dispatch(setStep(step - 1)) : "";
         }}
       >
-        Back
+        {t("back")}
       </Button>
       <Button
         newStyles="bg-sec text-black"
@@ -24,7 +26,7 @@ export default function NavigateButtons() {
           console.log(step);
         }}
       >
-        Next
+        {t("next")}
       </Button>
     </div>
   );

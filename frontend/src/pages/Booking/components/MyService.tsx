@@ -1,4 +1,5 @@
-import NavigateButtons from "./navigateButtons";
+import NavigateButtons from "./NavigateButtons";
+import { useTranslation } from "react-i18next";
 
 interface MyServiceProps {
   img: string;
@@ -7,6 +8,8 @@ interface MyServiceProps {
   price: number;
 }
 export default function MyService({ img, name, desc, price }: MyServiceProps) {
+  const { t } = useTranslation("Booking");
+  
   return (
     <div
       // style={{boxShadow: "0px 0px 7px 0px #FFFFFF" }}
@@ -21,7 +24,7 @@ export default function MyService({ img, name, desc, price }: MyServiceProps) {
       <span className="block text-end">{price} $</span>
       <hr />
       <div>
-        Total: <span>{price} $</span>
+        {t("totalT")}: <span>{price} $</span>
       </div>
       <div className="max-lg:hidden">
         <NavigateButtons></NavigateButtons>

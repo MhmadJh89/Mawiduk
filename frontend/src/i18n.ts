@@ -10,7 +10,7 @@ i18n
 },backend: {
     loadPath: '/locals/{{lng}}/{{ns}}.json'
 },
-ns: ['Login', 'Register'],
+ns: ['Login', 'Register','Booking'],
 defaultNS: 'enLogin',
 });
 
