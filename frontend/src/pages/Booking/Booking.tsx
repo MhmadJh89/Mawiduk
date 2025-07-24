@@ -23,11 +23,17 @@ import Button from "../../components/ui/Button";
 import { setStep } from "../../redux/slices/stepSlice";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import { CircularProgress } from "@mui/material";
-import NavigateButtons from "./components/navigateButtons";
+import NavigateButtons from "./components/NavigateButtons";
 import Overlay from "../../components/ui/Overlay";
+import { useTranslation } from "react-i18next";
+import SwitchLang from "../../components/ui/SwitchLang";
+import i18n from "../../i18n";
+
 const QontoConnector = styled(StepConnector)(() => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: "23px",
+    left: "calc(-50% + 16px)", // يعدل بداية الخط
+    right: "calc(50% + 16px)", // يعدل نهاية الخط
   },
   [`& .${stepConnectorClasses.line}`]: {
     borderColor: "#eaeaf0",
@@ -37,6 +43,8 @@ const QontoConnector = styled(StepConnector)(() => ({
 }));
 
 export default function Booking() {
+  const isRTL = i18n.language === "ar";
+  const { t } = useTranslation("Booking");
   const [login, setLogin] = useState(false);
   const step = useSelector((state: RootState) => state.step.step);
   const dispatch = useDispatch();
@@ -53,38 +61,38 @@ export default function Booking() {
       case 0:
         return (
           <div className="my-5">
-            <h2 className="text-[25px] ">Choose a service</h2>
+            <h2 className="text-[25px] ">{t("servicePageH")}</h2>
           </div>
         );
       case 1:
         return (
           <div className="my-5">
-            <h2 className="text-[25px] ">Select a staff member</h2>
+            <h2 className="text-[25px] ">{t("staffPageH")}</h2>
           </div>
         );
       case 2:
         return (
           <div className="my-5">
-            <h2 className="text-[25px]">Pick date & time</h2>
+            <h2 className="text-[25px]">{t("dateTimeH")}</h2>
           </div>
         );
 
       case 3:
         return (
           <div className="my-5">
-            <h2 className="text-[25px]">Enter Your details</h2>
+            <h2 className="text-[25px]">{t("detailsH")}</h2>
           </div>
         );
       case 4:
         return (
           <div className="my-5">
-            <h2 className="text-[25px]">Confirm your booking</h2>
+            <h2 className="text-[25px]">{t("confirmH")}</h2>
           </div>
         );
       case 5:
         return (
           <div className="my-5">
-            <h2 className="text-[40px] max-md:text-[25px]">Payment Details</h2>
+            <h2 className="text-[40px] max-md:text-[25px]">{t("PaymentH")}</h2>
           </div>
         );
     }
@@ -104,16 +112,19 @@ export default function Booking() {
       <div className="spec-container">
         {step <= 4 && (
           <>
-            {" "}
+            <SwitchLang />
             <h2 className="text-[25px] max-lg:text-[20px]   my-5">
-              Book Your Appointment _ Step by Step
+              {t("mainTitle")}
             </h2>
-            <div className="circles  my-5 min-lg:translate-x-[-55px]">
+            <div className="circles my-5 rtl:min-lg:translate-x-[55px] ltr:min-lg:translate-x-[-55px] ">
               <Stepper
                 activeStep={step}
                 alternativeLabel
                 connector={<QontoConnector />}
-                className="max-w-[900px]"
+                className="max-w-[900px] rtl:scale-x-[-1]"
+                sx={{
+                  flexDirection: isRTL ? "row-reverse" : "row",
+                }}
               >
                 <Step>
                   {/* @ts-expect-error: StepIconComponent is deprecated but still works */}
@@ -169,14 +180,14 @@ export default function Booking() {
           </div>
           {step === 1 && (
             <ul className="flex flex-wrap gap-5 mb-3 max-sm:justify-center max-sm:gap-2  max-sm:text-[13px] text-[#B2BBC6] text-[16px]">
-              <li>All</li>
-              <li>Sunday</li>
-              <li>Monday</li>
-              <li>Tuseday</li>
-              <li>Wednesday</li>
-              <li>Thursday</li>
-              <li>Friday</li>
-              <li>Saturday</li>
+              <li className="cursor-pointer">{t("all")}</li>
+              <li className="cursor-pointer">{t("sunday")}</li>
+              <li className="cursor-pointer">{t("monday")}</li>
+              <li className="cursor-pointer">{t("tuesday")}</li>
+              <li className="cursor-pointer">{t("wednesday")}</li>
+              <li className="cursor-pointer">{t("thursday")}</li>
+              <li className="cursor-pointer">{t("friday")}</li>
+              <li className="cursor-pointer">{t("saturday")}</li>
             </ul>
           )}
           <div className="flex gap-10 max-lg:flex-col-reverse min-lg:grid grid-cols-12">

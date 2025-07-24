@@ -1,5 +1,6 @@
 import StarIcon from "@mui/icons-material/Star";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import { useTranslation } from "react-i18next";
 interface ServiceCardProps {
   img: string;
   rate: number;
@@ -16,6 +17,7 @@ export default function ServiceCard({
   rate,
   isBooked,
 }: ServiceCardProps) {
+  const { t } = useTranslation("Booking");
   const rateArr = Array.from({ length: rate }, (_, i) => i);
   return (
     <div className="bg-card rounded-lg pl-10 pr-2 py-2 max-md:p-5 flex flex-col gap-3 xl:max-w-[963px]">
@@ -48,7 +50,7 @@ export default function ServiceCard({
           </>
         ) : (
           <div>
-            The Date: <span>jun 20, 2025</span>
+            {t("serviceDateT")}: <span>jun 20, 2025</span>
           </div>
         )}
       </div>
