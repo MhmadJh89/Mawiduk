@@ -11,11 +11,19 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+import os
+from cryptography.fernet import Fernet
+
+# استخدم متغير بيئي أو أنشئ مفتاحًا جديدًا عند أول تشغيل
+PASSWORD_ENCRYPTION_KEY = os.getenv(
+    "PASSWORD_ENCRYPTION_KEY",
+    Fernet.generate_key().decode()  # احفظ هذه القيمة الثابتة في .env لاحقًا
+).encode()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,8 +34,8 @@ SECRET_KEY = 'django-insecure-nolz!x5%rgv1opqianizo*4*)ktes_365t!6+=z#5uwzm_dwg1
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '::1']
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -39,7 +47,64 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',  
+    'rest_framework_simplejwt.token_blacklist',
+    'social_django', # for google auth
+    'apps.users',
+    'apps.appointments',
+    'apps.booking',
+    'apps.clients',
+    'apps.services',
+    'corsheaders',
+
+
 ]
+CORS_ALLOW_ALL_ORIGINS = True
+# for google auth
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+# for google auth
+
+# for google auth
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # يسمح باستخدام جلسة الـ Admin
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # لو تستخدم JWT كمان
+        # أو أي طريقة ثانية عندك
+    ],
+}
+
+
+SIMPLE_JWT = {
+    # مدة صلاحية توكين الوصول
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+
+    # مدة صلاحية توكين التحديث
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+
+    # إذا فعّلت الدوران، سيُنشئ لك توكين تحديث جديد عند كل Refresh
+    'ROTATE_REFRESH_TOKENS': True,
+
+    # عند الدوران، يتم حظر التوكين القديم
+    'BLACKLIST_AFTER_ROTATION': True,
+
+    # خوارزمية التوقيع، ومفتاح التوقيع
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+
+    # نوع الهيدر المستخدم في الطلب
+    'AUTH_HEADER_TYPES': ('Bearer',),
+
+    # إعدادات إضافية
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,9 +114,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
+
+
 
 TEMPLATES = [
     {
@@ -119,6 +187,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
