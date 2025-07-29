@@ -2,16 +2,29 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-
 from apps.users.models import CustomUser
-from apps.clients.serializers import CustomUserSerializer
-
+from apps.clients.serializers import *
+from rest_framework import generics
 
 class FixedPagination(PageNumberPagination):
     page_size = 20  # عدد ثابت لكل صفحة
 
+class ClientsCountAdminDashboard(APIView):
+    def get(self, request):
+        
+        count  = CustomUser.objects.filter(is_superuser=False,is_employee=False).count()    
+        return Response({
+       
+            "clients_count": count,
+        })
+    
+class ClientsLastDashboard(generics.ListAPIView):
+    queryset = CustomUser.objects.filter(is_superuser=False,is_employee=False)[:8]
+    serializer_class = ClientsSerializerLast
+    
 
 class ClientListView(APIView):
+    
     permission_classes = [IsAuthenticated]
 
     def get(self, request):

@@ -83,7 +83,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     # مدة صلاحية توكين الوصول
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
 
     # مدة صلاحية توكين التحديث
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
