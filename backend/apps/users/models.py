@@ -10,11 +10,12 @@ class CustomUser(AbstractUser):
 
     phone = PhoneNumberField(
         unique=True,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         help_text="أدخل رقمك بصيغة دولية: +<رمز الدولة><الرقم>"
     )
     birth_date=models.DateField(blank=True, null=True)
+    total_booking = models.PositiveIntegerField(default=0)
     
     class Meta:
         swappable = 'AUTH_USER_MODEL'

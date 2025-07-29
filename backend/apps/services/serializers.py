@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from .models import (
     Service,
     CustomService,
@@ -6,11 +7,36 @@ from .models import (
     Custom_Service_Calendar_Day,
     Custom_Service_Calendar_Appointment,
 )
+User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = User
+        fields = ["id", "first_name","last_name", "email"]
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = ['id', 'name', 'image']
+# serializers.py
+class ServiceForAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = CustomService
+        fields = [
+            "id", "name","price","expected_duration",
+            "is_available"
+        ]
+
+class CustomServiceForAdminSerializer(serializers.ModelSerializer):
+    employee = UserSerializer(read_only=True)
+    service  = serializers.StringRelatedField()
+
+    class Meta:
+        model  = CustomService
+        fields = [
+            "id", "name", "employee", "service",
+            "is_available"
+        ]
 
 class CustomServiceSerializer(serializers.ModelSerializer):
     class Meta:

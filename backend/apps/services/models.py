@@ -5,7 +5,6 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
-from month.models import MonthField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from datetime import datetime

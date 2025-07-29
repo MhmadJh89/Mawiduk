@@ -1,6 +1,13 @@
 from rest_framework import serializers
 from apps.users.models import CustomUser
 
+class ClientsSerializerLast(serializers.ModelSerializer):
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'total_booking','first_name','last_name','phone','email']
+        read_only_fields = ['id']
+
 class CustomUserSerializer(serializers.ModelSerializer):
     phone = serializers.SerializerMethodField()
 
