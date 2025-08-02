@@ -5,11 +5,10 @@ from apps.services.models import CustomService,Custom_Service_Calendar_Appointme
   # ربط بتطبيق الموظفين
 
 class Bookings(models.Model):
-
     STATE_CHOICES = [
-        ('confiemed', 'Confiemed'),
-        ('pending', 'Pending'),
-        ('canceled', 'Canceled'),
+    ('confirmed', 'Confirmed'),
+    ('pending', 'Pending'),
+    ('canceled', 'Canceled'),
     ]
     
     state = models.CharField(
@@ -26,7 +25,8 @@ class Bookings(models.Model):
     client = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='bookings',
-        on_delete=models.CASCADE
+        on_delete= models.CASCADE,
+    
     )
     date_time = models.ForeignKey(
         Custom_Service_Calendar_Appointment, 
