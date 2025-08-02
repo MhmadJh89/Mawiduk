@@ -88,3 +88,6 @@ html[dir="rtl"] body {
 .react-datepicker__day--outside-month {
   color: #9ca3af !important;
 }
+.react-datepicker__day--disabled {
+  visibility: hidden;
+}

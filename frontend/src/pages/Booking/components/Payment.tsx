@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../../components/ui/Button";
-import { setStep } from "../../../redux/slices/stepSlice";
+import { setStep } from "../../../redux/Booking/slices/stepSlice";
 import type { RootState } from "../../../redux/store";
 import payImg from "../../../assets/images/pay.jpg";
 import { useTranslation } from "react-i18next";

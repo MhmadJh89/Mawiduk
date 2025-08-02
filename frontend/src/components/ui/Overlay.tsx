@@ -1,3 +1,4 @@
+
 interface OverlayProps {
   onClick: Function;
 }
