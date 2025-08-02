@@ -1,14 +1,25 @@
 import LocalPhoneRoundedIcon from "@mui/icons-material/LocalPhoneRounded";
 import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
 import MoreVertRoundedIcon from "@mui/icons-material/MoreVertRounded";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../../redux/store";
+import { setStaffId } from "../../../redux/Booking/slices/serviceIdSlice";
 interface MemberCardProps {
   img: string;
   name: string;
   desc: string;
+  id: number | string | null;
 }
-export default function MemberCard({ img, name, desc }: MemberCardProps) {
+export default function MemberCard({ img, name, desc, id }: MemberCardProps) {
+  const dispatch = useDispatch<AppDispatch>();
+  const handleStaffId = () => {
+    dispatch(setStaffId(id));
+  };
   return (
-    <div className="col-span-1 bg-card py-7 px-15  xl:px-[70px] max-sm:px-8 h-[280px] text-center rounded-lg flex-col gap-2 flex relative  items-center">
+    <div
+      onClick={() => handleStaffId()}
+      className="cursor-pointer col-span-1 bg-card py-7 px-15  xl:px-[70px] max-sm:px-8 h-[280px] text-center rounded-lg flex-col gap-2 flex relative  items-center"
+    >
       <div className="more absolute top-1 right-1 cursor-pointer">
         <MoreVertRoundedIcon
           className="bg-black text-white rounded-full w-20px h-20px p-2"
