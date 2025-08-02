@@ -242,7 +242,7 @@ class BookingListAdminView(ListAPIView):
     queryset = Bookings.objects.all().select_related(
         'client',
         'service',
-        'state',
+        #'state',
         'date_time__day__calendar_month__service__employee'
     ).order_by('-date_time__day__date', '-date_time__time')  # ترتيب تلقائي من الأحدث للأقدم
 

@@ -43,3 +43,5 @@ class ClientListView(APIView):
         paginated_clients = paginator.paginate_queryset(clients, request)
         serializer = CustomUserSerializer(paginated_clients, many=True)
         return paginator.get_paginated_response(serializer.data)
+
+
