@@ -20,7 +20,7 @@ import Payment from "./components/Payment";
 import Success from "./components/Success";
 import { useEffect, useState } from "react";
 import Button from "../../components/ui/Button";
-import { setStep } from "../../redux/slices/stepSlice";
+import { setStep } from "../../redux/Booking/slices/stepSlice";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import { CircularProgress } from "@mui/material";
 import NavigateButtons from "./components/NavigateButtons";
@@ -28,6 +28,7 @@ import Overlay from "../../components/ui/Overlay";
 import { useTranslation } from "react-i18next";
 import SwitchLang from "../../components/ui/SwitchLang";
 import i18n from "../../i18n";
+import { setId } from "../../redux/Booking/slices/serviceIdSlice";
 
 const QontoConnector = styled(StepConnector)(() => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -45,11 +46,19 @@ const QontoConnector = styled(StepConnector)(() => ({
 export default function Booking() {
   const isRTL = i18n.language === "ar";
   const { t } = useTranslation("Booking");
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState(true);
   const step = useSelector((state: RootState) => state.step.step);
   const dispatch = useDispatch();
   const [windowSize, setWindowSize] = useState<number>(window.innerWidth);
   const [showMyService, setShowMyService] = useState<boolean>(false);
+  const [serviceId, setServiceId] = useState<number | string | null>(null);
+  const handleId = (id: number | string) => {
+    setServiceId(id);
+    dispatch(setId(id));
+  };
+  useEffect(() => {
+    dispatch(setId(serviceId));
+  }, [serviceId]);
   useEffect(() => {
     window.addEventListener("resize", () => {
       setWindowSize(window.innerWidth);
@@ -191,13 +200,14 @@ export default function Booking() {
             </ul>
           )}
           <div className="flex gap-10 max-lg:flex-col-reverse min-lg:grid grid-cols-12">
-            {step === 0 && <Services />}
+            {step === 0 && <Services handleId={handleId} />}
             {step === 1 && <Staff />}
             {step === 2 && <DateTime />}
             {step === 3 && <Details />}
             {step === 4 && <Confirm />}
             {step < 4 &&
-              !login &&
+              login &&
+              serviceId &&
               (windowSize > 1024 ? (
                 <MyService
                   img={serviceImg}
@@ -217,7 +227,7 @@ export default function Booking() {
                   />
                 )
               ))}
-            {step < 4 && login && (
+            {/* {step < 4 && login && (
               <div className="controls flex gap-3 font-bold col-span-3 w-full max-sm:w-full mb-auto">
                 <Button
                   newStyles="bg-white text-black"
@@ -237,7 +247,7 @@ export default function Booking() {
                   Next
                 </Button>
               </div>
-            )}
+            )} */}
             {step === 5 && <Payment />}
             {step === 6 && <Success />}
           </div>

@@ -1,13 +1,16 @@
 import StarIcon from "@mui/icons-material/Star";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 interface ServiceCardProps {
-  img: string;
-  rate: number;
+  img?: string;
+  rate?: number;
   name: string;
-  desc: string;
-  price: number;
-  isBooked: boolean;
+  desc?: string;
+  price?: number;
+  isBooked?: boolean;
+  id: number | string;
+  handleId: Function;
 }
 export default function ServiceCard({
   img,
@@ -16,9 +19,11 @@ export default function ServiceCard({
   price,
   rate,
   isBooked,
+  id,
+  handleId,
 }: ServiceCardProps) {
   const { t } = useTranslation("Booking");
-  const rateArr = Array.from({ length: rate }, (_, i) => i);
+  const rateArr = Array.from({ length: rate ?? 0 }, (_, i) => i);
   return (
     <div className="bg-card rounded-lg pl-10 pr-2 py-2 max-md:p-5 flex flex-col gap-3 xl:max-w-[963px]">
       <div className="flex gap-10 max-md:flex-col-reverse">
@@ -44,7 +49,12 @@ export default function ServiceCard({
             <div className="text-[25px]">
               <span>{price}</span>$
             </div>
-            <button className="cursor-pointer">
+            <button
+              className="cursor-pointer"
+              onClick={() => {
+                handleId(id);
+              }}
+            >
               <AddCircleOutlineOutlinedIcon fontSize="large" />
             </button>
           </>
