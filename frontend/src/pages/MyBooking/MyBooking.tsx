@@ -3,11 +3,29 @@ import SearchIcon from "@mui/icons-material/Search";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ServiceCard from "./components/ServiceCard";
 import serviceImg from "../../assets/images/barber.jpg";
+import Button from "../../components/ui/Button";
+import Overlay from "../../components/ui/Overlay";
+import { useState } from "react";
+import RatePopUp from "./RatePopUp";
 
 const MyBooking = () => {
+  const [showRatePopUp, setShowRatePopUp] = useState(true);
+
   return (
-    <div className="spec-container py-5">
-      <h2 className="text-[25px] max-lg:text-[20px]   my-5">My _Booking</h2>
+    <div
+      className={`spec-container py-5 ${
+        showRatePopUp && "h-[100vh] overflow-hidden"
+      }`}
+    >
+      {showRatePopUp && (
+        <Overlay
+          onClick={() => {
+            setShowRatePopUp(false);
+          }}
+        />
+      )}
+      {showRatePopUp && <RatePopUp />}
+      <h2 className={`text-[25px] max-lg:text-[20px] my-5 `}>My _Booking</h2>
       <p>
         Today's date:{" "}
         {new Date().toLocaleDateString("en-GB", {
@@ -88,13 +106,14 @@ const MyBooking = () => {
           </Select>
         </FormControl>{" "}
       </div>
-      <div className="flex flex-col mt-5 gap-4">
+      <div className="flex flex-col mt-5 gap-4 mb-10">
         <ServiceCard
           name="service name"
           id={1}
           desc="Lorem ipsum dolor sit amet consectetur. Ac mauris enim senectus quam ipsum ac ipsum sagittis sit. Nunc turpis leo sed tincidunt laoreet eleifend posuere diam. Leo fames aliquam et quisque sed convallis eros varius aliquam. "
           isBooked={true}
           img={serviceImg}
+          status="pending"
         />
         <ServiceCard
           name="service name"
@@ -102,15 +121,29 @@ const MyBooking = () => {
           desc="Lorem ipsum dolor sit amet consectetur. Ac mauris enim senectus quam ipsum ac ipsum sagittis sit. Nunc turpis leo sed tincidunt laoreet eleifend posuere diam. Leo fames aliquam et quisque sed convallis eros varius aliquam. "
           isBooked={true}
           img={serviceImg}
+          status="pending"
         />
-
         <ServiceCard
           name="service name"
           id={1}
           desc="Lorem ipsum dolor sit amet consectetur. Ac mauris enim senectus quam ipsum ac ipsum sagittis sit. Nunc turpis leo sed tincidunt laoreet eleifend posuere diam. Leo fames aliquam et quisque sed convallis eros varius aliquam. "
           isBooked={true}
           img={serviceImg}
+          status="completed"
         />
+        <ServiceCard
+          name="service name"
+          id={1}
+          desc="Lorem ipsum dolor sit amet consectetur. Ac mauris enim senectus quam ipsum ac ipsum sagittis sit. Nunc turpis leo sed tincidunt laoreet eleifend posuere diam. Leo fames aliquam et quisque sed convallis eros varius aliquam. "
+          isBooked={true}
+          img={serviceImg}
+          status="cancelled"
+        />
+      </div>
+      <div className="flex justify-end">
+        <Button newStyles="bg-white px-10 !w-fit text-black" onClick={() => {}}>
+          Add New Booking
+        </Button>
       </div>
     </div>
   );
