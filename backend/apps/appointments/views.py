@@ -6,7 +6,6 @@ from apps.services.serializers import AppointmentSerializer, DaySerializer
 from apps.services.models import Custom_Service_Calendar_Appointment,Custom_Service_Calendar_Day
 from django.core.mail import get_connection, send_mail
 from django.conf import settings
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.utils import timezone
@@ -134,7 +133,6 @@ class BookingUpdateView(generics.UpdateAPIView):
         else:
             serializer.save()
 
-
 class BookingCancelView(generics.DestroyAPIView):
     """
     إلغاء حجز:
@@ -149,7 +147,6 @@ class BookingCancelView(generics.DestroyAPIView):
         apt.state = 'open'
         apt.save()
         instance.delete()
-
 
 class BookingUpdateTimeStatusView(APIView):
     permission_classes = [IsAdminUser]
@@ -195,7 +192,21 @@ class BookingUpdateTimeStatusView(APIView):
             'message': 'Booking updated successfully',
             'booking': BookingListAdminSerializer(booking).data
         })
+    
+class DeleteBooking(APIView):
+    permission_classes = [IsAdminUser]
 
+    def delete(self,request):
+
+        booking_id = request.data.get('booking_id')
+        
+        try:
+            booking = Bookings.objects.get(id=booking_id)
+            booking.delete()
+            return Response({"detail": "تم حذف الحجز"}, status=200)
+        except Bookings.DoesNotExist:
+            return Response({"detail": "الحجز غير موجود"}, status=404)
+        
 class BookingEditOptionsView(APIView):
     permission_classes = [IsAdminUser]
 
@@ -236,7 +247,6 @@ class BookingEditOptionsView(APIView):
             'available_slots_same_day': AppointmentSerializer(available_slots_same_day, many=True).data,
             'future_days': future_days_data
         })
-
 
 class BookingListAdminView(ListAPIView):
     queryset = Bookings.objects.all().select_related(

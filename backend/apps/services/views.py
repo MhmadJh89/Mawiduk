@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from .models import *
 from .serializers import *
 import datetime
@@ -7,6 +7,10 @@ from django.utils import timezone
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 import django_filters
+from rest_framework import viewsets, status, mixins
+from rest_framework.decorators import action
+from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.response import Response
 # صلاحيات المدى الكامل للمسؤول
 class IsSuperUser(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -26,7 +30,10 @@ class IsEmployeeOrReadOnly(permissions.BasePermission):
 
 # 1. CRUD على Service (superuser فقط)
 
-
+class CustomServiceDeleteView(generics.DestroyAPIView):
+    queryset = CustomService.objects.all()
+    serializer_class = CustomServiceSerializer
+    permission_classes = [IsAdminUser]
 
 
 class ServiceListView(generics.ListAPIView):
@@ -38,6 +45,14 @@ class ServiceListCreateView(generics.ListCreateAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
     permission_classes = [IsAuthenticated, IsSuperUser]
+
+
+class CustomServiceCreateView(generics.ListCreateAPIView):
+    queryset = CustomService.objects.all()
+    serializer_class = CustomServiceSerializerCreate
+    permission_classes = [IsAuthenticated]
+    def perform_create(self, serializer):
+        serializer.save(employee=self.request.user)
 
 class ServiceDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
@@ -62,13 +77,32 @@ class CustomServiceListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(employee=self.request.user)
 
-
+# views.py
 class CustomServiceDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CustomService.objects.all()
-    serializer_class = CustomServiceSerializer
-    permission_classes = [IsAuthenticated, IsEmployeeOrReadOnly]
+    serializer_class = CustomServiceSerializer  # استخدم السيريالايزر المعدل
+    permission_classes = [IsAuthenticated]
+
+    def perform_update(self, serializer):
+        # تأكيد أن الموظف هو صاحب الخدمة فقط يمكنه التعديل
+        if self.request.user == serializer.instance.employee or self.request.user.is_superuser:
+            serializer.save()
+        else:
+            return "error"
+
+
 
 # 3. جلب الأشهر المتاحة (is_available=True)
+class MonthListEmployeeView(generics.ListAPIView):
+    serializer_class = MonthSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        custom_service = self.request.query_params.get('custom_service')
+        return Custom_Service_Calendar_Onemonth.objects.filter(
+            service_id=custom_service,
+        )
+    
 class MonthListView(generics.ListAPIView):
     serializer_class = MonthSerializer
     permission_classes = [IsAuthenticated]
@@ -156,6 +190,98 @@ class AppointmentListView(generics.ListAPIView):
     def get_queryset(self):
         day_id = self.request.query_params.get('day')
         qs = Custom_Service_Calendar_Appointment.objects.filter(day_id=day_id)
-        if self.request.user.is_staff:
+        if self.request.user.is_employee:
             return qs
         return qs.filter(state='open')
+
+
+
+
+
+
+class IsStaffOrReadOnly(BasePermission):
+
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
+        return bool(request.user and request.user.is_employee)
+
+
+class CanBookAppointment(BasePermission):
+
+    def has_permission(self, request, view):
+        # تأكد فقط من المصادقة العامة للـ book
+        if view.action == 'book':
+            return bool(request.user and request.user.is_authenticated)
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        if view.action == 'book':
+            return obj.state == 'open'
+        return bool(request.user and request.user.is_employee)
+
+
+# الـ ViewSets
+class CalendarMonthViewSet(viewsets.ModelViewSet):
+
+    queryset = Custom_Service_Calendar_Onemonth.objects.all()
+    serializer_class = CalendarMonthSerializer
+    permission_classes = [IsStaffOrReadOnly]
+
+
+class CalendarDayViewSet(viewsets.GenericViewSet,
+                         mixins.ListModelMixin,
+                         mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin):
+  
+    queryset = Custom_Service_Calendar_Day.objects.select_related('calendar_month')
+    serializer_class = CalendarDaySerializer
+    permission_classes = [IsStaffOrReadOnly]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        month_id = self.request.query_params.get('calendar_month')
+        if month_id is not None:
+            qs = qs.filter(calendar_month_id=month_id)
+        return qs
+
+
+class MyCustomServicesListView(generics.ListAPIView):
+    serializer_class = CustomServiceSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        
+        return CustomService.objects.filter(employee=self.request.user)
+
+class AppointmentViewSet(viewsets.GenericViewSet,
+                         mixins.ListModelMixin,
+                         mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin):
+
+    queryset = Custom_Service_Calendar_Appointment.objects.select_related('day')
+    serializer_class = AppointmentSerializer
+    permission_classes = [CanBookAppointment]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        day_id = self.request.query_params.get('day')
+        if day_id is not None:
+            qs = qs.filter(day=day_id)
+        return qs
+
+    @action(detail=True, methods=['post'])
+    def book(self, request, pk=None):
+     
+        appt = self.get_object()
+        self.check_object_permissions(request, appt)
+
+        if appt.state != 'open':
+            return Response(
+                {"detail": "هذا الموعد غير متاح للحجز."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        appt.state = 'booked'
+        appt.save(update_fields=['state'])
+        return Response(self.get_serializer(appt).data, status=status.HTTP_200_OK)
