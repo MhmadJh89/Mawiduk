@@ -6,6 +6,7 @@ import Clients from "./pages/Clients";
 import Booking from "./pages/Booking/Booking";
 import MyBooking from "./pages/MyBooking/MyBooking";
 import MySchedual from "./pages/MySchedual/MySchedual";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/booking" element={<Booking />} />
         <Route path="/my_booking" element={<MyBooking />} />
         <Route path="/my_schedual" element={<MySchedual />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );
