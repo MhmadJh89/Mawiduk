@@ -147,7 +147,7 @@ const Profile = () => {
           </div>
           <form
             action=""
-            className="mt-10 flex justify-between max-lg:flex-col"
+            className="mt-10 flex justify-between max-lg:flex-col gap-10"
           >
             <div className="flex flex-col gap-10">
               <Input
@@ -200,7 +200,7 @@ const Profile = () => {
                 </Select>
               </FormControl>
             </div>
-            <div className=" flex flex-col justify-between">
+            <div className=" flex flex-col justify-between gap-10">
               <Input
                 label="Phone Number"
                 value={formData.phone}
