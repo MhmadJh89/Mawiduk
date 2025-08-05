@@ -42,8 +42,6 @@ class BookingListAdminSerializer(serializers.ModelSerializer):
             'state',
         ]
         
-
-
 class BookingSerializerDashboard(serializers.ModelSerializer):
 
     class Meta:

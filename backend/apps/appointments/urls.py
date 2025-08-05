@@ -32,5 +32,6 @@ urlpatterns = [
      path("bookings_count/", BookingCountAdminDashboard.as_view(), name="booking-count" ),
     path("bookings_curv/", BookingCountAdminDashboardCurf.as_view(), name="booking-curv" ),
     path("last_bookings/", BookingLastDashboard.as_view(), name="booking-curv" ), 
+    path("delete/", DeleteBooking.as_view(), name="booking-del" ), 
 
 ]

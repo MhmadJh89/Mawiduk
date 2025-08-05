@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
-
+from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework.authtoken.models import Token
@@ -188,7 +188,87 @@ class PasswordResetRequestView(APIView):
             return Response({'username': user.username}, status=201)
         except User.DoesNotExist:
             return Response({"detail": "البريد الإلكتروني غير مسجل لدينا"}, status=400)
+        
+class CreateUserView(APIView):
+    permission_classes = [IsAdminUser]
 
+    def post(self, request):
+        data = request.data
+
+        # استخراج الحقول الواردة
+        first_name = data.get('first_name', '').strip()
+        last_name  = data.get('last_name', '').strip()
+        phone      = data.get('phone', '').strip()
+        email      = data.get('email', '').strip()
+        birth_date = data.get('birth_date', '').strip()
+        password   = data.get('password', '').strip()
+
+        # توليد username من البريد
+        username = email.split('@')[0]
+
+        # التحقق من عدم وجود البريد مسبقًا
+        if User.objects.filter(email=email).exists():
+            return Response(
+                {"detail": "البريد الإلكتروني موجود مسبقًا"},
+                status=status.HTTP_409_CONFLICT
+            )
+
+        # التحقق من عدم وجود رقم الجوال مسبقًا
+        if phone and User.objects.filter(phone=phone).exists():
+            return Response(
+                {"detail": "تم التسجيل بهذا الرقم مسبقًا"},
+                status=status.HTTP_409_CONFLICT
+            )
+
+        # إنشاء المستخدم وتشفير كلمة المرور
+        user = User(
+            username=username,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone or None,
+            birth_date=birth_date or None
+        )
+        user.password = make_password(password)
+        user.save()
+
+        # إرجاع بيانات المستخدم المنشأ
+        return Response(
+            {
+                "detail": "تم إنشاء المستخدم بنجاح",
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "phone": str(user.phone),
+                "birth_date": str(user.birth_date)
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+
+
+# app/views.py
+
+
+
+
+class DeleteUser(APIView):
+    permission_classes = [IsAdminUser]
+
+    def delete(self,request):
+
+        user_id = request.data.get('user_id')
+        
+        try:
+            user = CustomUser.objects.get(id=user_id)
+            user.delete()
+            return Response({"detail": "تم حذف المستخدم"}, status=200)
+        except CustomUser.DoesNotExist:
+            return Response({"detail": "المستخدم غير موجود"}, status=404)
+    
+    
 class PasswordChangeRequestView(APIView):
     permission_classes = [AllowAny]  
 
@@ -209,7 +289,111 @@ class PasswordChangeRequestView(APIView):
                 return Response({"detail": "كود التحقق غير صحيح"}, status=400)
         except User.DoesNotExist:
             return Response({"detail": "المستخدم غير موجود"}, status=409)
+
+
+# app/views.py
+
+
+
+class AdminUserProfileView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request, pk):
+        """
+        يعرض بيانات المستخدم بالمعرّف pk.
+        """
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response(
+                {"detail": "المستخدم غير موجود"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        return Response({
+            "id":         user.id,
+            "username":   user.username,
+            "email":      user.email,
+            "first_name": user.first_name,
+            "last_name":  user.last_name,
+            "birth_date": user.birth_date.isoformat() if user.birth_date else None,
+            "phone":      str(user.phone) if user.phone else None,
+            "is_employee":   user.is_employee,
+        }, status=status.HTTP_200_OK)
+
+    def put(self, request, pk):
+        """
+        يعدّل بيانات المستخدم بالمعرّف pk. يتحقق من عدم تكرار البريد أو الهاتف.
+        يمكن للمدير كذلك إعادة تعيين كلمة المرور إن أرسل حقل 'password'.
+        """
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response(
+                {"detail": "المستخدم غير موجود"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        data = request.data
+        new_email     = data.get('email', '').strip()
+        new_phone     = data.get('phone', '').strip()
+        new_first     = data.get('first_name', '').strip()
+        new_last      = data.get('last_name', '').strip()
+        new_birth     = data.get('birth_date', '').strip()
+        new_password  = data.get('password', '').strip()
+        new_is_employee = data.get('is_employee','')
+
+        # التحقق من البريد الإلكتروني
+        if new_email and new_email != user.email:
+            if User.objects.filter(email=new_email).exclude(pk=user.pk).exists():
+                return Response(
+                    {"detail": "البريد الإلكتروني مستخدم مسبقًا"},
+                    status=status.HTTP_409_CONFLICT
+                )
+            user.email = new_email
+            # اختياري: تحديث الـusername من البريد
+            user.username = new_email.split('@')[0]
+
+        # التحقق من رقم الجوال
+        if new_phone and new_phone != str(user.phone):
+            if User.objects.filter(phone=new_phone).exclude(pk=user.pk).exists():
+                return Response(
+                    {"detail": "رقم الهاتف مستخدم في حساب آخر"},
+                    status=status.HTTP_409_CONFLICT
+                )
+            user.phone = new_phone
+            
+
+        # تحديث الحقول النصية البسيطة
+        if new_first:
+            user.first_name = new_first
+        if new_last:
+            user.last_name = new_last
+        if new_birth:
+            user.birth_date = new_birth
         
+        user.is_employee=new_is_employee
+       
+            
+
+        # إعادة تعيين كلمة المرور إن وُجدت
+        if new_password:
+            user.set_password(new_password)
+
+        user.save()
+
+        return Response({
+            "detail":     "تم تحديث بيانات المستخدم بنجاح",
+            "id":         user.id,
+            "username":   user.username,
+            "email":      user.email,
+            "first_name": user.first_name,
+            "last_name":  user.last_name,
+            "birth_date": user.birth_date.format() if user.birth_date else None,
+            "phone":      str(user.phone) if user.phone else None,
+            "is_employee":   user.is_employee,
+        }, status=status.HTTP_200_OK)
+ 
 
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]

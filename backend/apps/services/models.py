@@ -31,7 +31,7 @@ class CustomService(models.Model):
     )
     description = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
-
+    image = models.ImageField(upload_to='services/', blank=True, null=True)
     opening_time   = models.TimeField()
     closing_time   = models.TimeField()
     break_start_1  = models.TimeField(blank=True, null=True)
