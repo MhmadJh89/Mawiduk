@@ -91,3 +91,22 @@ html[dir="rtl"] body {
 .react-datepicker__day--disabled {
   visibility: hidden;
 }
+/* CSS عام */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-main) transparent; /* thumb track */
+}
+
+/* للكروم وسفاري */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d4af37;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+}

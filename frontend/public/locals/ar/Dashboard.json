@@ -1,0 +1,22 @@
+{
+  "servicesTitle": "الخدمات",
+  "servicesDescription": "هذه هي جميع الخدمات المقدمة في متجرك.",
+  "description": "الوصف",
+  "price": "السعر",
+  "category": "الفئة",
+  "saveService": "حفظ",
+  "fillAllFields": "يرجى ملء جميع الحقول.",
+  "addService": "إضافة خدمة جديدة",
+  "filterByPrice": "تصفية حسب السعر",
+  "filterByCategory": "تصفية حسب الفئة",
+  "services": {
+    "serviceName": "اسم الخدمة",
+    "price": "السعر",
+    "duration": "المدة",
+    "status": "الحالة",
+    "active": "نشطة",
+    "inactive": "غير نشطة",
+    "edit": "تعديل",
+    "delete": "حذف"
+  }
+}

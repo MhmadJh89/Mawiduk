@@ -1,0 +1,27 @@
+{
+  "servicesTitle": "Services",
+  "servicesDescription": "Here are all the services offered in your store.",
+  "addService": "Add New Service",
+  "description": "Description",
+  "price": "Price",
+  "category": "Category",
+  "saveService": "Save",
+  "fillAllFields": "Please fill in all fields.",
+  "filterByPrice": "Filter by Price",
+  "filterByCategory": "Filter by Category",
+  "filterByName": "Filter By Name",
+  "filterByStatus": "Filter By Status",
+  "allStatus": "All Status",
+  "sortAsc": "Sort Asc",
+  "sortDesc": "Sort Desc",
+  "services": {
+    "serviceName": "Service Name",
+    "price": "Price",
+    "duration": "Duration",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "edit": "Edit",
+    "delete": "Delete"
+  }
+}
